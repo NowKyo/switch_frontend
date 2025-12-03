@@ -1,90 +1,22 @@
-<!doctype html>
-<html lang="es">
+<!DOCTYPE html>
+<html>
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Switch Search Player</title>
-<style>
-  body { background:#0b0f18; color:#e6eef8; font-family: Arial, sans-serif; padding:20px; }
-  #searchbox { width:100%; padding:12px; border-radius:8px; border: none; font-size:16px; }
-  button { margin-top:10px; padding:10px 14px; border-radius:8px; cursor:pointer; }
-  .result { background:#0f1724; margin-top:12px; padding:10px; border-radius:8px; }
-  .meta { font-size:13px; color:#9fb0d8; }
-  iframe, video { width:100%; max-height:420px; border-radius:8px; margin-top:8px; }
-</style>
+    <meta charset="UTF-8">
+    <title>Switch Video Browser</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<h2>Buscar videos (ej. perritos)</h2>
-<input id="q" placeholder="Buscar..." value="perritos" id="searchbox" />
-<button onclick="doSearch()">Buscar</button>
+
+<h1>Switch Video Browser</h1>
+
+<div id="search-box">
+    <input type="text" id="query" placeholder="Buscar videos, ej: perritos">
+    <button onclick="doSearch()">Buscar</button>
+</div>
 
 <div id="results"></div>
-<div id="viewer"></div>
+<div id="page"></div>
 
-<script>
-const BACKEND = "https://switchvideo.onrender.com";
-
-async function doSearch() {
-  const q = document.getElementById("q").value.trim();
-  if (!q) return;
-  document.getElementById("results").innerHTML = "Buscando...";
-  try {
-    const res = await fetch(`${BACKEND}/search?q=${encodeURIComponent(q)}&max_results=10`);
-    const data = await res.json();
-    renderResults(data.results);
-  } catch (e) {
-    document.getElementById("results").innerHTML = "Error buscando.";
-    console.error(e);
-  }
-}
-
-function renderResults(results){
-  const out = results.map(r => {
-    const title = r.title || r.url;
-    return `<div class="result">
-      <div class="meta">${escapeHtml(title)}</div>
-      <a href="#" onclick="openResult('${encodeURIComponent(r.url)}');return false;">Abrir</a>
-    </div>`;
-  }).join("");
-  document.getElementById("results").innerHTML = out || "Sin resultados";
-}
-
-async function openResult(encodedUrl){
-  const url = decodeURIComponent(encodedUrl);
-  document.getElementById("viewer").innerHTML = "Cargando página...";
-  try {
-    const res = await fetch(`${BACKEND}/scrape?url=${encodeURIComponent(url)}`);
-    const info = await res.json();
-    if (info.videos && info.videos.length > 0){
-      // mostrar el primer video disponible (puedes permitir elegir)
-      const v = info.videos[0];
-      document.getElementById("viewer").innerHTML = `
-        <div><strong>${escapeHtml(info.title || url)}</strong></div>
-        <div class="meta">${escapeHtml(info.description || "")}</div>
-        <video controls autoplay>
-          <source src="${v.stream_url}" type="video/mp4">
-          Tu navegador no soporta video.
-        </video>
-        <div style="margin-top:8px">Fuente original: <a href="${url}" target="_blank">Abrir en nueva ventana</a></div>
-      `;
-    } else {
-      document.getElementById("viewer").innerHTML = `
-        <div>No se detectaron videos en esta página.</div>
-        <div><a href="${url}" target="_blank">Abrir página original</a></div>
-      `;
-    }
-  } catch (e) {
-    document.getElementById("viewer").innerHTML = "Error cargando la página.";
-    console.error(e);
-  }
-}
-
-function escapeHtml(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
-
-window.addEventListener("load", () => {
-  // búsqueda inicial
-  doSearch();
-});
-</script>
+<script src="script.js"></script>
 </body>
 </html>
