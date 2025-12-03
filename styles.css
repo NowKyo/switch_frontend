@@ -1,0 +1,19 @@
+body {
+    background: white;
+    font-family: sans-serif;
+    padding: 20px;
+}
+
+#search-box {
+    margin-bottom: 20px;
+}
+
+.result {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.result:hover {
+    background: #f0f0f0;
+    cursor: pointer;
+}
