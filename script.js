@@ -1,9 +1,9 @@
 const API = "https://switchvideo.onrender.com";
 
 function doSearch() {
-    let q = document.getElementById("query").value;
+    const q = document.getElementById("query").value;
 
-    fetch(`${API}/search?query=${encodeURIComponent(q)}`)
+    fetch(`${API}/search?q=${encodeURIComponent(q)}`)
         .then(r => r.json())
         .then(data => {
             let html = "";
@@ -29,10 +29,11 @@ function openPage(url) {
             } else {
                 data.videos.forEach(v => {
                     html += `
-                        <video controls width="320">
-                            <source src="${v}">
-                        </video><br><br>
-                    `;
+                    <video controls width="300">
+                        <source src="${v}">
+                    </video>
+                    <br><br>
+                `;
                 });
             }
 
